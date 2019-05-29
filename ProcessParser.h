@@ -17,6 +17,7 @@
 #include <time.h>
 #include <unistd.h>
 #include "constants.h"
+#include "util.h"
 
 
 using namespace std;
@@ -44,3 +45,23 @@ private:
 };
 
 // TODO: Define all of the above functions below:
+std::string ProcessParser::getVmSize(std::string pid) {
+    std::string pathToFile = Path::basePath() + pid + Path::statusPath();
+    std::string searchString = "VmData:";
+    ifstream stream;
+    string line;
+    float result;
+    Util::getStream(pathToFile,stream);
+    while(std::getline(stream, line)) {
+        if (line.rfind(searchString,0) == 0) {
+            istringstream buf(line);
+            istream_iterator<string> beg(buf), end;
+            vector<string> values (beg, end);
+            result = (stof(values[1]) / float(1024));
+            break;
+        }
+    }
+        return to_string(result);
+
+
+}
